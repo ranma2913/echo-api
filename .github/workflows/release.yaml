@@ -17,9 +17,13 @@ on: # https://docs.github.com/en/actions/using-workflows/events-that-trigger-wor
 env:
   DOCKER_IMAGE: ranma2913/echo-api
 
+# Cancel currently running workflow if we get a new commit
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-release:
-    needs: 'semver-bump'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
