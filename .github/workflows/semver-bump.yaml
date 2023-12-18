@@ -1,7 +1,10 @@
 name: semver-bump
 
 on: # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows
+  pull_request:
   workflow_dispatch:
+    branches:
+      - '!master'
     inputs:
       bump-level:
         description: "Semver Level to Bump:"
@@ -16,6 +19,7 @@ concurrency:
 
 jobs:
   semver-bump:
+    if: github.ref != 'refs/heads/master'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -47,6 +51,7 @@ jobs:
           NEW_TAG=v$NEW_VERSION
           echo "NEW_TAG=$NEW_TAG"
           echo "NEW_TAG=$NEW_TAG" >> "$GITHUB_ENV"
+          echo "NEW_TAG=$NEW_TAG" >> "$GITHUB_OUTPUT"
           ./mvnw versions:set -DnewVersion=$NEW_VERSION && ./mvnw versions:commit
       - name: git-commit
         run: |
@@ -56,5 +61,18 @@ jobs:
           git checkout $GITHUB_HEAD_REF
           git commit -a -m ":arrow_up: Bump Semver = ${NEW_VERSION}"
           git push
+
+      - name: git-tag
+        run: |
           git tag -a -m ":arrow_up: Bump Semver = ${NEW_VERSION}" v${NEW_VERSION} HEAD
           git push --tags
+
+#      - name: pull-request-merge
+#        uses: kalgurn/merge-pr-action@1.0.0 # https://github.com/marketplace/actions/pull-request-merge-action
+#        with:
+#          token: ${{ github.token }}
+#          owner: ${{ github.owner }}
+#          repo: ${{ github.repository }}
+#          pull_number: ${{ github.pull_number }}
+#          commit_title: ${{ steps.maven-versions-set.outputs.NEW_TAG }}
+
