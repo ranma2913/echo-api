@@ -59,12 +59,12 @@ jobs:
           git config user.email 'github-actions[bot]@users.noreply.github.com'
           git fetch origin
           git checkout $GITHUB_HEAD_REF
-          git commit -a -m ":arrow_up: Bump Semver = ${NEW_VERSION}"
+          git commit -a -m ":arrow_up: Bump Semver = ${NEW_VERSION}" || true
           git push
 
       - name: git-tag
         run: |
-          git tag -a -m ":arrow_up: Bump Semver = ${NEW_VERSION}" v${NEW_VERSION} HEAD
+          git tag -a -m ":arrow_up: Bump Semver = ${NEW_VERSION}" v${NEW_VERSION} HEAD || true
           git push --tags
 
 #      - name: pull-request-merge
