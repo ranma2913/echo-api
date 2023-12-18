@@ -1,0 +1,59 @@
+name: semver-bump
+
+on: # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows
+  workflow_dispatch:
+    inputs:
+      bump-level:
+        description: "Semver Level to Bump"
+        required: true
+        type: string
+        default: 'patch' # patch/minor/major
+
+# Cancel currently running workflow if we get a new commit
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  semver-bump:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+      - name: semver-lookup
+        id: semver-lookup
+        run: |
+          LAST_TAG=$(git describe --tags --abbrev=0 --match "v[0-9]*.[0-9]*.[0-9]*" 2>/dev/null || echo 'v0.0.0')
+          echo "LAST_TAG=${LAST_TAG}"
+          echo "LAST_TAG=${LAST_TAG}" >> "$GITHUB_ENV"
+          echo "LAST_VERSION=${LAST_TAG#v}"
+          echo "LAST_VERSION=${LAST_TAG#v}" >> "$GITHUB_OUTPUT"
+      - id: semver-bump
+        uses: olegsu/semver-action@v1
+        with:
+          version: ${{ steps.semver-lookup.outputs.LAST_VERSION }}
+          bump: ${{ inputs.bump-level }}
+      - name: maven-versions-set
+        run: |
+          NEW_VERSION=${{ steps.semver-bump.outputs.version }}
+          echo "NEW_VERSION=$NEW_VERSION"
+          echo "NEW_VERSION=$NEW_VERSION" >> "$GITHUB_ENV"
+          NEW_TAG=v$NEW_VERSION
+          echo "NEW_TAG=$NEW_TAG"
+          echo "NEW_TAG=$NEW_TAG" >> "$GITHUB_ENV"
+          ./mvnw versions:set -DnewVersion=$NEW_VERSION && ./mvnw versions:commit
+      - name: git-commit
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git fetch origin
+          git checkout $GITHUB_HEAD_REF
+          git commit -a -m ":arrow_up: Bump Semver = ${NEW_VERSION}"
+          env | sort
+          git push
