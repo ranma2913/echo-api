@@ -4,10 +4,10 @@ on: # https://docs.github.com/en/actions/using-workflows/events-that-trigger-wor
   workflow_dispatch:
     inputs:
       bump-level:
-        description: "Semver Level to Bump"
+        description: "Semver Level to Bump:"
         required: true
-        type: string
-        default: 'patch' # patch/minor/major
+        type: choice
+        options: [ patch,minor,major ]
 
 # Cancel currently running workflow if we get a new commit
 concurrency:
