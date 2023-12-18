@@ -7,7 +7,7 @@ on: # https://docs.github.com/en/actions/using-workflows/events-that-trigger-wor
   workflow_dispatch:
 
 env:
-  DOCKER_IMAGE: ranma2913/echo-api
+  DOCKER_IMAGE: docker.io/ranma2913/echo-api
 
 # Cancel currently running workflow if we get a new commit
 concurrency:
