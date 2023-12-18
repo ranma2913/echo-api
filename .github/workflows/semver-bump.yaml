@@ -3,6 +3,8 @@ name: semver-bump
 on: # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows
   pull_request:
   workflow_dispatch:
+    branches:
+      - '!master'
     inputs:
       bump-level:
         description: "Semver Level to Bump:"
