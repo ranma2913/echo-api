@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequestMapping(path = "/echo")
-public class RestApi {
+public class EchoApiController {
   @GetMapping
   @ResponseStatus(code = HttpStatus.OK)
   public void get(@RequestHeader HttpHeaders headers) {
