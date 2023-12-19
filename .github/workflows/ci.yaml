@@ -2,6 +2,7 @@ name: ci
 
 on: # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows
   push:
+  pull_request:
   workflow_dispatch:
 
 env:
