@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="echo-api [clean,test]" type="MavenRunConfiguration" factoryName="Maven">
+  <configuration default="false" name="echo-api [clean,test,Pnative]" type="MavenRunConfiguration" factoryName="Maven">
     <MavenSettings>
       <option name="myGeneralSettings">
         <MavenGeneralSettings>
@@ -48,13 +48,14 @@
             <list>
               <option value="clean"/>
               <option value="test"/>
-              <option value="-U"/>
             </list>
           </option>
           <option name="multimoduleDir"/>
           <option name="pomFileName" value="pom.xml"/>
           <option name="profilesMap">
-            <map/>
+            <map>
+              <entry key="native" value="true"/>
+            </map>
           </option>
           <option name="projectsCmdOptionValues">
             <list/>

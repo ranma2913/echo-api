@@ -20,6 +20,7 @@
     <apache-groovy.version>4.0.16</apache-groovy.version><!-- Check the latest version: https://mvnrepository.com/artifact/org.apache.groovy/groovy-all -->
     <gmavenplus-plugin.version>3.0.2</gmavenplus-plugin.version><!-- Check the latest version: https://mvnrepository.com/artifact/org.codehaus.gmavenplus/gmavenplus-plugin -->
     <jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version><!-- Check the latest version: https://mvnrepository.com/artifact/org.jacoco/jacoco-maven-plugin -->
+    <banana.version>2.1.0</banana.version><!-- Check the latest version: https://mvnrepository.com/artifact/io.leego/banana -->
 
     <!-- Sonar Configs. -->
     <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
@@ -47,15 +48,14 @@
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-docker-compose</artifactId>
-      <scope>runtime</scope>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
       <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>io.leego</groupId>
+      <artifactId>banana</artifactId>
+      <version>${banana.version}</version>
     </dependency>
 
     <dependency>
@@ -155,6 +155,11 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${maven-surefire-plugin.version}</version>
         <configuration>
+          <!--
+          When using the maven-surefire-plugin or maven-failsafe-plugin you must not use a `forkCount` of `0`
+          or set the `forkMode` to `never` as this would prevent the execution of the tests with the javaagent set
+          and no coverage would be recorded. @see https://www.jacoco.org/jacoco/trunk/doc/maven.html
+          -->
           <!--suppress UnresolvedMavenProperty -->
           <argLine>${maven-surefire-plugin.jvm-flags} ${argLine}</argLine>
           <includes>

@@ -9,33 +9,41 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(path = "/echo")
 public class EchoApiController {
+  String defaultResponse = """
+{"name": "ranma2913"}
+""";
+
   @GetMapping
   @ResponseStatus(code = HttpStatus.OK)
-  public void get(@RequestHeader HttpHeaders headers) {
+  public Object get(@RequestHeader HttpHeaders headers) {
     log.info("Endpoint called with\n  headers={}", headers);
+    return defaultResponse;
   }
 
   @PutMapping
   @ResponseStatus(code = HttpStatus.OK)
-  public void put(@RequestBody Object body, @RequestHeader HttpHeaders headers) {
+  public Object put(@RequestBody Object body, @RequestHeader HttpHeaders headers) {
     log.info("Endpoint called with\n  body={}\n  headers={}", body, headers);
+    return body;
   }
 
   @PatchMapping
   @ResponseStatus(code = HttpStatus.OK)
-  public void patch(@RequestBody Object body, @RequestHeader HttpHeaders headers) {
+  public Object patch(@RequestBody Object body, @RequestHeader HttpHeaders headers) {
     log.info("Endpoint called with\n  body={}\n  headers={}", body, headers);
+    return body;
   }
 
   @PostMapping
   @ResponseStatus(code = HttpStatus.CREATED)
-  public void post(@RequestBody Object body, @RequestHeader HttpHeaders headers) {
+  public Object post(@RequestBody Object body, @RequestHeader HttpHeaders headers) {
     log.info("Endpoint called with\n  body={}\n  headers={}", body, headers);
+    return body;
   }
 
   @DeleteMapping
   @ResponseStatus(code = HttpStatus.NO_CONTENT)
-  public void delete(@RequestBody Object body, @RequestHeader HttpHeaders headers) {
-    log.info("Endpoint called with\n  body={}\n  headers={}", body, headers);
+  public void delete(@RequestHeader HttpHeaders headers) {
+    log.info("Endpoint called with\n  headers={}", headers);
   }
 }

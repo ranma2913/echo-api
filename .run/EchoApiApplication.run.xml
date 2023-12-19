@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="EchoApiApplication" type="SpringBootApplicationConfigurationType"
+    factoryName="Spring Boot" nameIsGenerated="true">
+    <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources"/>
+    <module name="echo-api"/>
+    <option name="SPRING_BOOT_MAIN_CLASS" value="com.ranma2913.echoapi.EchoApiApplication"/>
+    <method v="2">
+      <option name="Make" enabled="true"/>
+    </method>
+  </configuration>
+</component>
