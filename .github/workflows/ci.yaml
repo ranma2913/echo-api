@@ -43,6 +43,8 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           title: '# :lobster: Coverage Report'
           update-comment: true
+          min-coverage-overall: 75
+          min-coverage-changed-files: 90
 
   analyze:
     name: Analyze
