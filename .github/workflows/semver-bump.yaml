@@ -46,6 +46,7 @@ jobs:
           version: ${{ steps.semver-lookup.outputs.LAST_VERSION }}
           bump: ${{ inputs.bump-level }}
       - name: maven-versions-set
+        id: maven-versions-set
         run: |
           NEW_VERSION=${{ steps.semver-bump.outputs.version }}
           echo "NEW_VERSION=$NEW_VERSION"
