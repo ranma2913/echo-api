@@ -15,13 +15,23 @@
   </parent>
 
   <properties>
-    <java.version>21</java.version>
+    <java.version>17</java.version>
+    <spock.version>2.4-M1-groovy-4.0</spock.version><!-- Check the latest version: https://mvnrepository.com/artifact/org.spockframework/spock-core -->
+    <apache-groovy.version>4.0.16</apache-groovy.version><!-- Check the latest version: https://mvnrepository.com/artifact/org.apache.groovy/groovy-all -->
+    <gmavenplus-plugin.version>3.0.2</gmavenplus-plugin.version><!-- Check the latest version: https://mvnrepository.com/artifact/org.codehaus.gmavenplus/gmavenplus-plugin -->
+    <jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version><!-- Check the latest version: https://mvnrepository.com/artifact/org.jacoco/jacoco-maven-plugin -->
+    <banana.version>2.1.0</banana.version><!-- Check the latest version: https://mvnrepository.com/artifact/io.leego/banana -->
+
+    <!-- Sonar Configs. -->
+    <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+
+    <!-- Default Surefire Plugin Heap is 2Gi. -->
+    <maven-surefire-plugin.jvm-flags>-Xmx2048m</maven-surefire-plugin.jvm-flags>
 
     <!-- Native Image Configs -->
     <docker.org>ranma2913</docker.org>
     <docker.repo>${project.artifactId}</docker.repo>
-    <spring-boot.build-image.imageName>${docker.org}/${docker.repo}</spring-boot.build-image.imageName>
-    <spring-boot.build-image.tag>latest</spring-boot.build-image.tag>
+    <spring-boot.build-image.imageName>${docker.org}/${docker.repo}:latest</spring-boot.build-image.imageName>
     <spring-boot.build-image.createdDate>now</spring-boot.build-image.createdDate>
   </properties>
 
@@ -38,25 +48,71 @@
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-docker-compose</artifactId>
-      <scope>runtime</scope>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
       <optional>true</optional>
     </dependency>
     <dependency>
+      <groupId>io.leego</groupId>
+      <artifactId>banana</artifactId>
+      <version>${banana.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.spockframework</groupId>
+      <artifactId>spock-core</artifactId>
+      <version>${spock.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.spockframework</groupId>
+      <artifactId>spock-spring</artifactId>
+      <version>${spock.version}</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>${build-helper-maven-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>add-source</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>src/main/java</source>
+                <source>src/main/groovy</source>
+              </sources>
+            </configuration>
+          </execution>
+          <execution>
+            <id>add-test-source</id>
+            <phase>generate-test-sources</phase>
+            <goals>
+              <goal>add-test-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>src/test/java</source>
+                <source>src/test/groovy</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.graalvm.buildtools</groupId>
         <artifactId>native-maven-plugin</artifactId>
@@ -79,6 +135,87 @@
           </execution>
         </executions>
       </plugin>
+
+      <!-- Test Plugins :: Start -->
+      <plugin>
+        <groupId>org.codehaus.gmavenplus</groupId>
+        <artifactId>gmavenplus-plugin</artifactId>
+        <version>${gmavenplus-plugin.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>addTestSources</goal>
+              <goal>compileTests</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>${maven-surefire-plugin.version}</version>
+        <configuration>
+          <!--
+          When using the maven-surefire-plugin or maven-failsafe-plugin you must not use a `forkCount` of `0`
+          or set the `forkMode` to `never` as this would prevent the execution of the tests with the javaagent set
+          and no coverage would be recorded. @see https://www.jacoco.org/jacoco/trunk/doc/maven.html
+          -->
+          <!--suppress UnresolvedMavenProperty -->
+          <argLine>${maven-surefire-plugin.jvm-flags} ${argLine}</argLine>
+          <includes>
+            <include>**/*Spec.java</include>
+            <include>**/*Test.java</include>
+          </includes>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${jacoco-maven-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>jacoco-initialize</id>
+            <phase>compile</phase><!-- https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html#Lifecycle_Reference -->
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>jacoco-report</id>
+            <phase>test</phase><!-- https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html#Lifecycle_Reference -->
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>jacoco-check</id>
+            <phase>test</phase><!-- https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html#Lifecycle_Reference -->
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <rule>
+                  <element>PACKAGE</element>
+                  <limits>
+                    <limit>
+                      <counter>METHOD</counter>
+                      <value>COVEREDRATIO</value>
+                      <minimum>80%</minimum>
+                    </limit>
+                    <limit>
+                      <counter>CLASS</counter>
+                      <value>MISSEDCOUNT</value>
+                      <maximum>0</maximum>
+                    </limit>
+                  </limits>
+                </rule>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- Test Plugins :: End -->
     </plugins>
   </build>
 

@@ -2,6 +2,7 @@ name: ci
 
 on: # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows
   push:
+  pull_request:
   workflow_dispatch:
 
 env:
@@ -15,6 +16,9 @@ concurrency:
 jobs:
   build-test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -28,7 +32,19 @@ jobs:
 
       - name: maven-test-native
         run: |
-          ./mvnw -B test -Pnative
+          ./mvnw -B test -Pnative -Djacoco.haltOnFailure=false
+
+      - name: jacoco-report
+        id: jacoco-report
+        uses: madrapps/jacoco-report@v1.6.1
+        with:
+          paths: |
+            ${{ github.workspace }}/**/jacoco/*.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: '# :lobster: Coverage Report'
+          update-comment: true
+          min-coverage-overall: 75
+          min-coverage-changed-files: 90
 
   analyze:
     name: Analyze
