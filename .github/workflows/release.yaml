@@ -32,8 +32,7 @@ jobs:
       - name: maven-package-native-image
         run: |
           ./mvnw -B package -Pnative \
-          -Dspring-boot.build-image.imageName=${{ env.DOCKER_IMAGE }} \
-          -Dspring-boot.build-image.tag=${{ env.DOCKER_TAG }}
+          -Dspring-boot.build-image.imageName=${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
 
       - name: docker-image-inspect
         run: |
