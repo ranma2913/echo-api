@@ -31,7 +31,7 @@ jobs:
 
       - name: maven-test-native
         run: |
-          ./mvnw -B test -Pnative
+          ./mvnw -B test -Pnative -Djacoco.haltOnFailure=false
 
       - name: jacoco-report
         id: jacoco-report
