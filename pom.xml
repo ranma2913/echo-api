@@ -16,7 +16,7 @@
 
   <properties>
     <java.version>17</java.version>
-    <spock.version>2.4-M1-groovy-4.0</spock.version><!-- Check the latest version: https://mvnrepository.com/artifact/org.spockframework/spock-core -->
+    <spock.version>2.4-M4-groovy-4.0</spock.version><!-- Check the latest version: https://mvnrepository.com/artifact/org.spockframework/spock-core -->
     <apache-groovy.version>4.0.16</apache-groovy.version><!-- Check the latest version: https://mvnrepository.com/artifact/org.apache.groovy/groovy-all -->
     <gmavenplus-plugin.version>3.0.2</gmavenplus-plugin.version><!-- Check the latest version: https://mvnrepository.com/artifact/org.codehaus.gmavenplus/gmavenplus-plugin -->
     <jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version><!-- Check the latest version: https://mvnrepository.com/artifact/org.jacoco/jacoco-maven-plugin -->
