@@ -1,7 +1,5 @@
 package com.ranma2913.echoapi;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.leego.banana.BananaUtils;
 import io.leego.banana.Font;
 import java.util.LinkedHashMap;
@@ -13,6 +11,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
+import tools.jackson.core.exc.JacksonIOException;
+import tools.jackson.databind.ObjectMapper;
 
 @Slf4j
 @SpringBootApplication
@@ -30,7 +30,7 @@ public class EchoApiApplication {
    * @param event ContextRefreshedEvent means the Spring Context has fully refreshed.
    * @see <a href="https://github.com/yihleego/banana">...</a>
    */
-  @SneakyThrows(JsonProcessingException.class)
+  @SneakyThrows(JacksonIOException.class)
   @EventListener
   public void onApplicationEvent(ContextRefreshedEvent event) {
     log.trace("ContextRefreshedEvent={}", event);
