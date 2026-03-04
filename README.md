@@ -2,8 +2,8 @@
 
 [![CI](https://github.com/ranma2913/echo-api/actions/workflows/ci.yaml/badge.svg)](https://github.com/ranma2913/echo-api/actions/workflows/ci.yaml)
 [![Release](https://github.com/ranma2913/echo-api/actions/workflows/release.yaml/badge.svg)](https://github.com/ranma2913/echo-api/actions/workflows/release.yaml)
-[![Docker Image](https://img.shields.io/docker/v/ranma2913/echo-api?label=docker)](https://hub.docker.com/r/ranma2913/echo-api)
-[![Java](https://img.shields.io/badge/Java-21-blue)](https://adoptium.net/)
+[![Docker Image](https://img.shields.io/badge/ghcr.io-ranma2913%2Fecho--api-blue)](https://github.com/ranma2913/echo-api/pkgs/container/echo-api)
+[![Java](https://img.shields.io/badge/Java-25-blue)](https://adoptium.net/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0.3-brightgreen)](https://spring.io/projects/spring-boot)
 
 A minimal, production-ready Spring Boot REST API that echoes HTTP requests back to the caller. Send any HTTP method to
@@ -43,23 +43,23 @@ connection details — no configuration required.
 
 ## Technology Stack
 
-| Category           | Technology                                | Version        |
-|--------------------|-------------------------------------------|----------------|
-| Language           | Java                                      | 21 (LTS)       |
-| Framework          | Spring Boot                               | 4.0.3          |
-| Web Layer          | Spring MVC (`spring-boot-starter-webmvc`) | —              |
-| Build Tool         | Apache Maven (via `mvnw` wrapper)         | —              |
-| Test Language      | Groovy (Apache Groovy)                    | 5.0.4          |
-| Test Framework     | Spock Framework                           | 2.4-groovy-5.0 |
-| Test Runner        | Maven Surefire Plugin                     | —              |
-| Code Coverage      | JaCoCo                                    | 0.8.13         |
-| Boilerplate        | Lombok                                    | —              |
-| ASCII Art          | Banana (io.leego)                         | 2.1.0          |
-| Native Image       | GraalVM Native Maven Plugin               | —              |
-| Container Build    | Spring Boot Buildpacks                    | —              |
-| Container Registry | Docker Hub (`ranma2913/echo-api`)         | —              |
-| CI/CD              | GitHub Actions                            | —              |
-| Security Analysis  | GitHub CodeQL                             | —              |
+| Category           | Technology                                               | Version        |
+|--------------------|----------------------------------------------------------|----------------|
+| Language           | Java                                                     | 25             |
+| Framework          | Spring Boot                                              | 4.0.3          |
+| Web Layer          | Spring MVC (`spring-boot-starter-webmvc`)                | —              |
+| Build Tool         | Apache Maven (via `mvnw` wrapper)                        | —              |
+| Test Language      | Groovy (Apache Groovy)                                   | 5.0.4          |
+| Test Framework     | Spock Framework                                          | 2.4-groovy-5.0 |
+| Test Runner        | Maven Surefire Plugin                                    | —              |
+| Code Coverage      | JaCoCo                                                   | 0.8.14         |
+| Boilerplate        | Lombok                                                   | —              |
+| ASCII Art          | Banana (io.leego)                                        | 2.1.0          |
+| Native Image       | GraalVM Native Maven Plugin                              | —              |
+| Container Build    | Spring Boot Buildpacks                                   | —              |
+| Container Registry | GitHub Container Registry (`ghcr.io/ranma2913/echo-api`) | —              |
+| CI/CD              | GitHub Actions                                           | —              |
+| Security Analysis  | GitHub CodeQL                                            | —              |
 
 ---
 
@@ -92,7 +92,7 @@ There is no database, no external dependencies, and no required environment vari
 
 ```bash
 # Pull and run the latest pre-built native image
-docker run --rm -p 8080:8080 ranma2913/echo-api:latest
+docker run --rm -p 8080:8080 ghcr.io/ranma2913/echo-api:latest
 ```
 
 The API is available at `http://localhost:8080`.
@@ -168,18 +168,17 @@ curl -s -X POST http://localhost:8080/echo \
 
 ## CI/CD Pipelines
 
-| Workflow           | Trigger                                | What it does                                                                                  |
-|--------------------|----------------------------------------|-----------------------------------------------------------------------------------------------|
-| `ci.yaml`          | push / PR / `workflow_dispatch`        | Builds native image, runs Spock tests, posts JaCoCo PR comment, runs CodeQL security analysis |
-| `release.yaml`     | push to `master` / `workflow_dispatch` | Builds & pushes GraalVM native Docker image to Docker Hub (`ranma2913/echo-api`)              |
-| `semver-bump.yaml` | PR to non-master / `workflow_dispatch` | Bumps patch/minor/major version in `pom.xml`, commits, and tags                               |
+| Workflow           | Trigger                                | What it does                                                                                            |
+|--------------------|----------------------------------------|---------------------------------------------------------------------------------------------------------|
+| `ci.yaml`          | push / PR / `workflow_dispatch`        | Runs `mvnw verify`, executes Spock tests, posts JaCoCo PR comment, runs CodeQL security analysis        |
+| `release.yaml`     | push to `master` / `workflow_dispatch` | Builds & pushes GraalVM native Docker image to GitHub Container Registry (`ghcr.io/ranma2913/echo-api`) |
+| `semver-bump.yaml` | PR to non-master / `workflow_dispatch` | Bumps patch/minor/major version in `pom.xml`, commits, and tags                                         |
 
 ### Required GitHub Secrets / Variables
 
-| Name              | Type     | Description                         |
-|-------------------|----------|-------------------------------------|
-| `DOCKER_USERNAME` | Variable | Docker Hub username                 |
-| `DOCKER_PASSWORD` | Secret   | Docker Hub password or access token |
+| Name           | Type     | Description                                                          |
+|----------------|----------|----------------------------------------------------------------------|
+| `GITHUB_TOKEN` | Built-in | Automatically provided; used to push to `ghcr.io` and comment on PRs |
 
 ---
 

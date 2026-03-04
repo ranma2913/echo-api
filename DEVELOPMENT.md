@@ -19,7 +19,7 @@ Local development reference for the `echo-api` project. For a project overview, 
 
 ## Prerequisites
 
-- **Java 21** (Temurin recommended) — `java -version` must report `21.x`
+- **Java 25** — `java -version` must report `25.x`
 - **Docker** (only required for native image builds)
 - Maven is provided via the `./mvnw` wrapper — no separate Maven installation needed
 
@@ -44,7 +44,7 @@ echo-api/
 │   ├── prompts/                      # GitHub Copilot prompt files
 │   ├── agents/                       # GitHub Copilot agent files
 │   └── skills/                       # GitHub Copilot skill files
-├── pom.xml                           # Maven build — Spring Boot 4, Java 21, Spock, JaCoCo, GraalVM
+├── pom.xml                           # Maven build — Spring Boot 4, Java 25, Spock, JaCoCo, GraalVM
 ├── mvnw / mvnw.cmd                   # Maven wrapper scripts
 ├── AGENTS.md                         # AI agent context and instructions
 ├── llms.txt                          # LLM-friendly project index
@@ -109,11 +109,9 @@ starting an actual HTTP server.
 ### Running Tests
 
 ```bash
-# Run all tests (JVM mode) — generates JaCoCo coverage report
+# Run all tests with JaCoCo coverage
 ./mvnw test
 
-# Run tests in GraalVM native-test mode (matches CI)
-./mvnw -B test -Pnative -Djacoco.haltOnFailure=false
 
 # Run a single spec by name
 ./mvnw test -Dtest=EchoApiControllerSpec
@@ -156,21 +154,21 @@ Test class names must end with `Spec` or `Test` to be picked up by Maven Surefir
 Requires Docker. Uses Spring Boot Buildpacks — no Dockerfile needed.
 
 ```bash
-# Build native OCI image (tagged ranma2913/echo-api:latest)
-./mvnw -B package -Pnative
+# Build native OCI image (tagged ghcr.io/ranma2913/echo-api:local)
+./mvnw -B package
 
 # Inspect the built image
-docker image inspect ranma2913/echo-api:latest
+docker image inspect ghcr.io/ranma2913/echo-api:local
 
 # Run the native image
-docker run --rm -p 8080:8080 ranma2913/echo-api:latest
+docker run --rm -p 8080:8080 ghcr.io/ranma2913/echo-api:local
 ```
 
 ---
 
 ## Coding Standards
 
-- **Production code:** Java 21 — use `@RestController`, `@RequestMapping`, `@ResponseStatus`
+- **Production code:** Java 25 — use `@RestController`, `@RequestMapping`, `@ResponseStatus`
 - **Test code:** Groovy 5 / Spock — specs named `*Spec.groovy`
 - **Boilerplate reduction:** Prefer Lombok annotations (`@Slf4j`, `@SneakyThrows`)
 - **Logging:** SLF4J via `@Slf4j` — never use `System.out.println`
@@ -189,7 +187,7 @@ For deeper AI-assisted development guidance, see [`AGENTS.md`](AGENTS.md) and [
 
 **Application fails to start**
 
-- Confirm `java -version` returns Java 21
+- Confirm `java -version` returns Java 25
 - Check `src/main/resources/config/application.properties` for misconfiguration
 
 **Tests fail with coverage violation**
