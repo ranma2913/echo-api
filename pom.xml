@@ -210,7 +210,7 @@
           </execution>
           <execution>
             <id>jacoco-check</id>
-            <phase>test</phase><!-- https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html#Lifecycle_Reference -->
+            <phase>verify</phase><!-- https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html#Lifecycle_Reference -->
             <goals>
               <goal>check</goal>
             </goals>
