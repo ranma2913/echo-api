@@ -33,6 +33,8 @@
     <docker.repo>${project.artifactId}</docker.repo>
     <spring-boot.build-image.imageName>${docker.org}/${docker.repo}:latest</spring-boot.build-image.imageName>
     <spring-boot.build-image.createdDate>now</spring-boot.build-image.createdDate>
+    <spring-boot.build-image.runImage>paketobuildpacks/run-jammy-tiny</spring-boot.build-image.runImage>
+    <spring-boot.build-image.imagePlatform>linux/amd64</spring-boot.build-image.imagePlatform>
   </properties>
 
   <dependencies>
