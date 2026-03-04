@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import org.owasp.security.logging.Utils;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -38,7 +39,8 @@ public class EchoApiController {
                 org.springframework.web.servlet.HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
     var params = pathVars != null ? pathVars : Map.<String, String>of();
 
-    log.info("Endpoint called: method={} url={}", req.getMethod(), url);
+    log.info(
+        "Endpoint called: method={} url={}", req.getMethod(), Utils.escapeNLFChars(url.toString()));
 
     return new RequestDetails(
         req.getMethod(),

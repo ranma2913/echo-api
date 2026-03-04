@@ -57,7 +57,11 @@
       <artifactId>banana</artifactId>
       <version>${banana.version}</version>
     </dependency>
-
+    <dependency>
+      <groupId>org.owasp</groupId>
+      <artifactId>security-logging-logback</artifactId> <!-- Log injection prevention: sanitize non-JSON strings before logging -->
+      <version>1.1.7</version>
+    </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-webmvc-test</artifactId>
