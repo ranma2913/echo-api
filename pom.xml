@@ -29,9 +29,10 @@
     <maven-surefire-plugin.jvm-flags>-Xmx2048m</maven-surefire-plugin.jvm-flags>
 
     <!-- Native Image Configs -->
+    <docker.registry>ghcr.io</docker.registry>
     <docker.org>ranma2913</docker.org>
     <docker.repo>${project.artifactId}</docker.repo>
-    <spring-boot.build-image.imageName>${docker.org}/${docker.repo}:latest</spring-boot.build-image.imageName>
+    <spring-boot.build-image.imageName>${docker.registry}/${docker.org}/${docker.repo}:local</spring-boot.build-image.imageName>
     <spring-boot.build-image.createdDate>now</spring-boot.build-image.createdDate>
     <spring-boot.build-image.builder>paketobuildpacks/builder-noble-java-tiny</spring-boot.build-image.builder><!-- https://github.com/paketo-buildpacks/builder-noble-java-tiny -->
     <spring-boot.build-image.imagePlatform>linux/amd64</spring-boot.build-image.imagePlatform>
