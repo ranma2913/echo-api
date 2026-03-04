@@ -38,7 +38,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: maven-test-native
+      - name: maven-verify
         run: |
           ./mvnw -B -ntp verify -Djacoco.haltOnFailure=false
 
