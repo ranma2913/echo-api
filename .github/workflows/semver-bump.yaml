@@ -40,11 +40,18 @@ jobs:
           echo "LAST_TAG=${LAST_TAG}" >> "$GITHUB_ENV"
           echo "LAST_VERSION=${LAST_TAG#v}"
           echo "LAST_VERSION=${LAST_TAG#v}" >> "$GITHUB_OUTPUT"
+          echo "SUMMARY_LOOKUP=🔍 Last tag found: \`${LAST_TAG}\` → version \`${LAST_TAG#v}\`" >> "$GITHUB_ENV"
+
       - id: semver-bump
         uses: olegsu/semver-action@v1
         with:
           version: ${{ steps.semver-lookup.outputs.LAST_VERSION }}
           bump: ${{ inputs.bump-level }}
+
+      - name: semver-bump-summary
+        run: |
+          echo "SUMMARY_BUMP=⬆️ Bumped \`${{ inputs.bump-level }}\` level: \`${LAST_TAG}\` → \`v${{ steps.semver-bump.outputs.version }}\`" >> "$GITHUB_ENV"
+
       - name: maven-versions-set
         id: maven-versions-set
         run: |
@@ -56,6 +63,8 @@ jobs:
           echo "NEW_TAG=$NEW_TAG" >> "$GITHUB_ENV"
           echo "NEW_TAG=$NEW_TAG" >> "$GITHUB_OUTPUT"
           ./mvnw versions:set -DnewVersion=$NEW_VERSION && ./mvnw versions:commit
+          echo "SUMMARY_MAVEN=✅ Maven \`pom.xml\` version set to \`${NEW_VERSION}\`" >> "$GITHUB_ENV"
+
       - name: git-commit
         run: |
           git config user.name 'github-actions[bot]'
@@ -64,18 +73,44 @@ jobs:
           git checkout $GITHUB_HEAD_REF
           git commit -a -m ":arrow_up: Bump Semver = ${NEW_VERSION}" || true
           git push
+          echo "SUMMARY_COMMIT=📝 Committed version bump to \`${GITHUB_HEAD_REF}\`" >> "$GITHUB_ENV"
 
       - name: git-tag
         run: |
           git tag -a -m ":arrow_up: Bump Semver = ${NEW_VERSION}" v${NEW_VERSION} HEAD || true
           git push --tags
+          echo "SUMMARY_TAG=🏷️ Tagged \`v${NEW_VERSION}\` and pushed to origin" >> "$GITHUB_ENV"
 
-#      - name: pull-request-merge
-#        uses: kalgurn/merge-pr-action@1.0.0 # https://github.com/marketplace/actions/pull-request-merge-action
-#        with:
-#          token: ${{ github.token }}
-#          owner: ${{ github.owner }}
-#          repo: ${{ github.repository }}
-#          pull_number: ${{ github.pull_number }}
-#          commit_title: ${{ steps.maven-versions-set.outputs.NEW_TAG }}
+      - name: build-summary
+        if: always()
+        run: |
+          cat >> "$GITHUB_STEP_SUMMARY" <<EOF
+          # 🔖 Semver Bump Summary
+
+          | Field | Value |
+          |-------|-------|
+          | **Workflow** | \`${{ github.workflow }}\` |
+          | **Triggered by** | \`${{ github.event_name }}\` |
+          | **Actor** | \`${{ github.actor }}\` |
+          | **Branch** | \`${{ github.ref_name }}\` |
+          | **Bump level** | \`${{ inputs.bump-level }}\` |
+          | **Run** | [\`#${{ github.run_number }}\`](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) |
+
+          ## 🔍 Step Details
+
+          | Step | Result |
+          |------|--------|
+          | Semver lookup | ${SUMMARY_LOOKUP:-❌ did not complete} |
+          | Semver bump | ${SUMMARY_BUMP:-❌ did not complete} |
+          | Maven versions:set | ${SUMMARY_MAVEN:-❌ did not complete} |
+          | Git commit | ${SUMMARY_COMMIT:-❌ did not complete} |
+          | Git tag | ${SUMMARY_TAG:-❌ did not complete} |
+
+          ## 🏷️ Version
+
+          | | Tag |
+          |---|-----|
+          | **Before** | \`${LAST_TAG:-unknown}\` |
+          | **After** | \`v${NEW_VERSION:-unknown}\` |
+          EOF
 
