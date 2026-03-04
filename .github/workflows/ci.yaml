@@ -32,15 +32,25 @@ jobs:
           distribution: 'temurin'
 
       - uses: actions/cache@v4
+        id: maven-cache
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
 
+      - name: maven-cache-summary
+        run: |
+          if [ "${{ steps.maven-cache.outputs.cache-hit }}" = "true" ]; then
+            echo "SUMMARY_CACHE=✅ Maven cache **hit** \`${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}\`" >> "$GITHUB_ENV"
+          else
+            echo "SUMMARY_CACHE=⚠️ Maven cache **miss** — dependencies downloaded fresh" >> "$GITHUB_ENV"
+          fi
+
       - name: maven-verify
         run: |
           ./mvnw -B -ntp verify -Djacoco.haltOnFailure=false
+          echo "SUMMARY_BUILD=✅ Maven verify **succeeded**" >> "$GITHUB_ENV"
 
       - name: jacoco-report
         id: jacoco-report
@@ -55,3 +65,35 @@ jobs:
           update-comment: true
           min-coverage-overall: 75
           min-coverage-changed-files: 90
+
+      - name: jacoco-summary
+        if: github.event_name == 'pull_request'
+        run: |
+          OVERALL="${{ steps.jacoco-report.outputs.coverage-overall }}"
+          CHANGED="${{ steps.jacoco-report.outputs.coverage-changed-files }}"
+          echo "SUMMARY_JACOCO=🦞 Coverage — overall: \`${OVERALL}%\` | changed files: \`${CHANGED}%\` (thresholds: overall ≥75%, changed ≥90%)" >> "$GITHUB_ENV"
+
+      - name: build-summary
+        if: always()
+        run: |
+          cat >> "$GITHUB_STEP_SUMMARY" <<EOF
+          # 🔬 CI Build Summary
+
+          | Field | Value |
+          |-------|-------|
+          | **Workflow** | \`${{ github.workflow }}\` |
+          | **Triggered by** | \`${{ github.event_name }}\` |
+          | **Actor** | \`${{ github.actor }}\` |
+          | **Branch** | \`${{ github.ref_name }}\` |
+          | **Commit** | \`${{ github.sha }}\` |
+          | **Run** | [\`#${{ github.run_number }}\`](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) |
+
+          ## 🔍 Step Details
+
+          | Step | Result |
+          |------|--------|
+          | Maven cache | ${SUMMARY_CACHE:-⚪ not reported} |
+          | Maven verify | ${SUMMARY_BUILD:-❌ did not complete} |
+          | JaCoCo coverage | ${SUMMARY_JACOCO:-⚪ not a pull request} |
+          EOF
+
