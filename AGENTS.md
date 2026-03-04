@@ -8,26 +8,26 @@
 accepts all standard HTTP methods (GET, PUT, PATCH, POST, DELETE) and echoes the request body back to the caller. Its
 primary purpose is to serve as a reference scaffold demonstrating:
 
-- Spring Boot 4 + Java 21 REST API patterns
+- Spring Boot 4 + Java 25 REST API patterns
 - GraalVM native image compilation via Spring Boot Maven plugin
 - Spock/Groovy integration tests with MockMvc
 - JaCoCo code coverage enforcement (≥80% method coverage, 0 missed classes)
 - Automated CI/CD via GitHub Actions (build, test, CodeQL, Docker release, semver bumping)
 - GitHub Copilot customization via instructions, prompts, agents, and skills
 
-**Key technologies:** Java 21, Spring Boot 4, Spring MVC, Lombok, GraalVM Native Image, Spock 2.4, Groovy 5, JaCoCo,
+**Key technologies:** Java 25, Spring Boot 4, Spring MVC, Lombok, GraalVM Native Image, Spock 2.4, Groovy 5, JaCoCo,
 Maven Wrapper (`mvnw`)
 
-**Docker image:** `docker.io/ranma2913/echo-api`
+**Docker image:** `ghcr.io/ranma2913/echo-api`
 
 ---
 
 ## Setup Commands
 
-Prerequisites: Java 21 (Temurin recommended), Maven is provided via the wrapper (`./mvnw`).
+Prerequisites: Java 25 (Temurin recommended), Maven is provided via the wrapper (`./mvnw`).
 
 ```bash
-# Verify Java version (must be 21)
+# Verify Java version (must be 25)
 java -version
 
 # Install dependencies and compile (no tests)
@@ -71,8 +71,6 @@ Tests are written in **Groovy/Spock** and live under `src/test/groovy/`.
 # Run all tests (JVM mode) with JaCoCo coverage
 ./mvnw test
 
-# Run all tests in GraalVM native-test mode (used by CI)
-./mvnw -B test -Pnative -Djacoco.haltOnFailure=false
 
 # Run a single test class by name
 ./mvnw test -Dtest=EchoApiControllerSpec
@@ -97,7 +95,7 @@ open target/site/jacoco/index.html
 
 ## Code Style Guidelines
 
-- **Language:** Java 21 for production code; Groovy 5 for test code
+- **Language:** Java 25 for production code; Groovy 5 for test code
 - **Framework:** Spring Boot 4 / Spring MVC — use `@RestController`, `@RequestMapping`, `@ResponseStatus`
 - **Annotations:** Prefer Lombok (`@Slf4j`, `@SneakyThrows`) to reduce boilerplate
 - **Logging:** Use SLF4J via the Lombok `@Slf4j` annotation; never use `System.out`
@@ -125,30 +123,29 @@ The `native` Maven profile builds a GraalVM native image packaged as a Docker/OC
 
 ```bash
 # Build native OCI image locally (requires Docker daemon)
-./mvnw -B package -Pnative
-# Tagged as: ranma2913/echo-api:latest
+./mvnw -B package
+# Tagged as: ghcr.io/ranma2913/echo-api:local
 ```
 
 ```bash
 # Inspect the built image
-docker image inspect ranma2913/echo-api:latest
+docker image inspect ghcr.io/ranma2913/echo-api:local
 
 # Run the native image container
-docker run --rm -p 8080:8080 ranma2913/echo-api:latest
+docker run --rm -p 8080:8080 ghcr.io/ranma2913/echo-api:local
 ```
 
 ### CI/CD Pipelines (`.github/workflows/`)
 
-| Workflow           | Trigger                   | What it does                                                                                  |
-|--------------------|---------------------------|-----------------------------------------------------------------------------------------------|
-| `ci.yaml`          | push / PR / manual        | Builds native image, runs Spock tests, generates JaCoCo report, runs CodeQL security analysis |
-| `release.yaml`     | push to `master` / manual | Builds & pushes GraalVM native Docker image to Docker Hub (`ranma2913/echo-api`)              |
-| `semver-bump.yaml` | PR to non-master / manual | Bumps patch/minor/major version in `pom.xml`, commits, and tags                               |
+| Workflow           | Trigger                   | What it does                                                                                            |
+|--------------------|---------------------------|---------------------------------------------------------------------------------------------------------|
+| `ci.yaml`          | push / PR / manual        | Runs `mvnw verify`, executes Spock tests, generates JaCoCo report, runs CodeQL security analysis        |
+| `release.yaml`     | push to `master` / manual | Builds & pushes GraalVM native Docker image to GitHub Container Registry (`ghcr.io/ranma2913/echo-api`) |
+| `semver-bump.yaml` | PR to non-master / manual | Bumps patch/minor/major version in `pom.xml`, commits, and tags                                         |
 
 **Required GitHub secrets/variables for release:**
 
-- `DOCKER_USERNAME` (variable) — Docker Hub username
-- `DOCKER_PASSWORD` (secret) — Docker Hub password or access token
+- `GITHUB_TOKEN` (built-in) — automatically provided; used to push to `ghcr.io` and comment on PRs
 
 ---
 
@@ -176,7 +173,7 @@ docker run --rm -p 8080:8080 ranma2913/echo-api:latest
 
 **Application fails to start:**
 
-- Confirm `java -version` returns Java 21
+- Confirm `java -version` returns Java 25
 - Check `src/main/resources/config/application.properties` for misconfiguration
 
 **Tests fail with coverage violation:**
@@ -216,7 +213,7 @@ echo-api/
 │   ├── prompts/                      # GitHub Copilot prompt files
 │   ├── agents/                       # GitHub Copilot agent files
 │   └── skills/                       # GitHub Copilot skill files
-├── pom.xml                           # Maven build — Spring Boot 4, Java 21, Spock, JaCoCo, GraalVM
+├── pom.xml                           # Maven build — Spring Boot 4, Java 25, Spock, JaCoCo, GraalVM
 ├── mvnw / mvnw.cmd                   # Maven wrapper scripts
 ├── AGENTS.md                         # This file
 ├── llms.txt                          # LLM-friendly project index

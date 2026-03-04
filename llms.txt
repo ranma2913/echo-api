@@ -1,6 +1,6 @@
 # echo-api
 
-> A Spring Boot REST API that echoes request bodies back to the caller. All HTTP methods (GET, PUT, PATCH, POST, DELETE) are supported on the `/echo` endpoint. Built with Java 21, Spring Boot 4, GraalVM native image support, and tested with Spock/Groovy.
+> A Spring Boot REST API that echoes request bodies back to the caller. All HTTP methods (GET, PUT, PATCH, POST, DELETE) are supported on the `/echo` endpoint. Built with Java 25, Spring Boot 4, GraalVM native image support, and tested with Spock/Groovy.
 
 This project demonstrates a minimal, production-ready Spring Boot REST API scaffold with native image support, automated CI/CD via GitHub Actions, JaCoCo code coverage enforcement, and GitHub Copilot customization via instructions, prompts, agents, and skills.
 
@@ -12,7 +12,7 @@ This project demonstrates a minimal, production-ready Spring Boot REST API scaff
 
 ## Configuration
 
-- [pom.xml](pom.xml): Maven build configuration — Spring Boot 4, Java 21, Spock 2.4, Groovy 5, JaCoCo, GraalVM native image
+- [pom.xml](pom.xml): Maven build configuration — Spring Boot 4, Java 25, Spock 2.4, Groovy 5, JaCoCo, GraalVM native image
 - [application.properties](src/main/resources/config/application.properties): Application and logging configuration
 
 ## Source Code
@@ -28,7 +28,7 @@ This project demonstrates a minimal, production-ready Spring Boot REST API scaff
 ## CI/CD Workflows
 
 - [ci.yaml](.github/workflows/ci.yaml): Continuous integration — builds native image, runs tests, JaCoCo coverage report, CodeQL security analysis
-- [release.yaml](.github/workflows/release.yaml): Release pipeline — builds and pushes GraalVM native Docker image to Docker Hub on master branch
+- [release.yaml](.github/workflows/release.yaml): Release pipeline — builds and pushes GraalVM native Docker image to GitHub Container Registry (`ghcr.io`) on master branch
 - [semver-bump.yaml](.github/workflows/semver-bump.yaml): Semantic versioning automation — bumps patch/minor/major version on pull requests
 
 ## GitHub Copilot Customization

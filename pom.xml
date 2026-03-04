@@ -29,12 +29,14 @@
     <maven-surefire-plugin.jvm-flags>-Xmx2048m</maven-surefire-plugin.jvm-flags>
 
     <!-- Native Image Configs -->
+    <docker.registry>ghcr.io</docker.registry>
     <docker.org>ranma2913</docker.org>
     <docker.repo>${project.artifactId}</docker.repo>
-    <spring-boot.build-image.imageName>${docker.org}/${docker.repo}:latest</spring-boot.build-image.imageName>
+    <spring-boot.build-image.imageName>${docker.registry}/${docker.org}/${docker.repo}:local</spring-boot.build-image.imageName>
     <spring-boot.build-image.createdDate>now</spring-boot.build-image.createdDate>
-    <spring-boot.build-image.runImage>paketobuildpacks/run-jammy-tiny</spring-boot.build-image.runImage>
+    <spring-boot.build-image.builder>paketobuildpacks/builder-noble-java-tiny</spring-boot.build-image.builder><!-- https://github.com/paketo-buildpacks/builder-noble-java-tiny -->
     <spring-boot.build-image.imagePlatform>linux/amd64</spring-boot.build-image.imagePlatform>
+    <spring-boot.build-image.tags/>
   </properties>
 
   <dependencies>
@@ -86,6 +88,19 @@
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-help-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>print-active-profiles</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>active-profiles</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
@@ -150,6 +165,11 @@
             <goals>
               <goal>build-image-no-fork</goal>
             </goals>
+            <configuration>
+              <image>
+                <tags>${spring-boot.build-image.tags}</tags>
+              </image>
+            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -210,7 +230,7 @@
           </execution>
           <execution>
             <id>jacoco-check</id>
-            <phase>test</phase><!-- https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html#Lifecycle_Reference -->
+            <phase>verify</phase><!-- https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html#Lifecycle_Reference -->
             <goals>
               <goal>check</goal>
             </goals>
@@ -240,4 +260,39 @@
     </plugins>
   </build>
 
+  <profiles>
+    <profile>
+      <id>core</id>
+      <activation>
+        <os>
+          <family>mac</family>
+        </os>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+            <configuration>
+              <image>
+                <env>
+                  <BP_DEPENDENCY_MIRROR_REPO1_MAVEN_ORG>https://maven-central.storage-download.googleapis.com</BP_DEPENDENCY_MIRROR_REPO1_MAVEN_ORG>
+                  <credentials_JFROG_SAAS_USERNAME>${env.credentials_JFROG_SAAS_USERNAME}</credentials_JFROG_SAAS_USERNAME>
+                  <credentials_JFROG_SAAS_TOKEN>${env.credentials_JFROG_SAAS_TOKEN}</credentials_JFROG_SAAS_TOKEN>
+                </env>
+                <bindings>
+                  <!-- 1) Mount your existing settings.xml into the binding -->
+                  <binding>${user.home}/.m2/settings.xml:/platform/bindings/maven/settings.xml:ro</binding>
+                  <!-- 2) Mount a tiny file that contains the word: maven -->
+                  <binding>${user.home}/.m2/cnb-binding-type-maven:/platform/bindings/maven/type:ro</binding>
+                  <!-- 3) Speed up builds by mounting your local Maven repository into the binding -->
+                  <binding>${user.home}/.m2/repository:/home/vcap/.m2/repository:rw</binding>
+                </bindings>
+              </image>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
