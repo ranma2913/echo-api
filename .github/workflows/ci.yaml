@@ -41,7 +41,7 @@ jobs:
         uses: madrapps/jacoco-report@v1.6.1
         with:
           paths: |
-            ${{ github.workspace }}/**/site/jacoco/jacoco.xml
+            ${{ github.workspace }}/target/site/jacoco/*.xml
           token: ${{ secrets.GITHUB_TOKEN }}
           title: '# :lobster: Coverage Report'
           update-comment: true
