@@ -10,16 +10,16 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.2.0</version>
+    <version>4.0.3</version>
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
 
   <properties>
-    <java.version>17</java.version>
-    <spock.version>2.4-M1-groovy-4.0</spock.version><!-- Check the latest version: https://mvnrepository.com/artifact/org.spockframework/spock-core -->
-    <apache-groovy.version>4.0.16</apache-groovy.version><!-- Check the latest version: https://mvnrepository.com/artifact/org.apache.groovy/groovy-all -->
-    <gmavenplus-plugin.version>3.0.2</gmavenplus-plugin.version><!-- Check the latest version: https://mvnrepository.com/artifact/org.codehaus.gmavenplus/gmavenplus-plugin -->
-    <jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version><!-- Check the latest version: https://mvnrepository.com/artifact/org.jacoco/jacoco-maven-plugin -->
+    <java.version>21</java.version>
+    <spock.version>2.4-groovy-5.0</spock.version><!-- Check the latest version: https://mvnrepository.com/artifact/org.spockframework/spock-core -->
+    <apache-groovy.version>5.0.4</apache-groovy.version><!-- Check the latest version: https://mvnrepository.com/artifact/org.apache.groovy/groovy-all -->
+    <gmavenplus-plugin.version>4.3.1</gmavenplus-plugin.version><!-- Check the latest version: https://mvnrepository.com/artifact/org.codehaus.gmavenplus/gmavenplus-plugin -->
+    <jacoco-maven-plugin.version>0.8.13</jacoco-maven-plugin.version><!-- Check the latest version: https://mvnrepository.com/artifact/org.jacoco/jacoco-maven-plugin -->
     <banana.version>2.1.0</banana.version><!-- Check the latest version: https://mvnrepository.com/artifact/io.leego/banana -->
 
     <!-- Sonar Configs. -->
@@ -38,7 +38,7 @@
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>
+      <artifactId>spring-boot-starter-webmvc</artifactId>
     </dependency>
 
     <dependency>
@@ -57,10 +57,14 @@
       <artifactId>banana</artifactId>
       <version>${banana.version}</version>
     </dependency>
-
+    <dependency>
+      <groupId>org.owasp</groupId>
+      <artifactId>security-logging-logback</artifactId> <!-- Log injection prevention: sanitize non-JSON strings before logging -->
+      <version>1.1.7</version>
+    </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-test</artifactId>
+      <artifactId>spring-boot-starter-webmvc-test</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -149,6 +153,9 @@
             </goals>
           </execution>
         </executions>
+        <configuration>
+          <targetBytecode>${java.version}</targetBytecode>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

@@ -1,0 +1,92 @@
+# echo-api
+
+> A Spring Boot REST API that echoes request bodies back to the caller. All HTTP methods (GET, PUT, PATCH, POST, DELETE) are supported on the `/echo` endpoint. Built with Java 21, Spring Boot 4, GraalVM native image support, and tested with Spock/Groovy.
+
+This project demonstrates a minimal, production-ready Spring Boot REST API scaffold with native image support, automated CI/CD via GitHub Actions, JaCoCo code coverage enforcement, and GitHub Copilot customization via instructions, prompts, agents, and skills.
+
+## Documentation
+
+- [README](README.md): Project overview and purpose
+- [HELP](HELP.md): Spring Boot getting started references and additional documentation links
+- [LICENSE](LICENSE): Project license
+
+## Configuration
+
+- [pom.xml](pom.xml): Maven build configuration — Spring Boot 4, Java 21, Spock 2.4, Groovy 5, JaCoCo, GraalVM native image
+- [application.properties](src/main/resources/config/application.properties): Application and logging configuration
+
+## Source Code
+
+- [EchoApiApplication](src/main/java/com/ranma2913/echoapi/EchoApiApplication.java): Spring Boot entry point with startup banner and memory diagnostics
+- [EchoApiController](src/main/java/com/ranma2913/echoapi/EchoApiController.java): REST controller exposing GET, PUT, PATCH, POST, DELETE on `/echo`
+
+## Tests
+
+- [EchoApiControllerSpec](src/test/groovy/com/ranma2913/echoapi/EchoApiControllerSpec.groovy): Spock integration tests for all `/echo` endpoints using MockMvc
+- [EchoApiApplicationSpec](src/test/groovy/com/ranma2913/echoapi/EchoApiApplicationSpec.groovy): Spock smoke test verifying the Spring context loads
+
+## CI/CD Workflows
+
+- [ci.yaml](.github/workflows/ci.yaml): Continuous integration — builds native image, runs tests, JaCoCo coverage report, CodeQL security analysis
+- [release.yaml](.github/workflows/release.yaml): Release pipeline — builds and pushes GraalVM native Docker image to Docker Hub on master branch
+- [semver-bump.yaml](.github/workflows/semver-bump.yaml): Semantic versioning automation — bumps patch/minor/major version on pull requests
+
+## GitHub Copilot Customization
+
+### Instructions
+
+- [devops-core-principles](.github/instructions/devops-core-principles.instructions.md): CALMS framework and DORA metrics guidance
+- [java.instructions](.github/instructions/java.instructions.md): Java coding standards and best practices
+- [java-21-to-java-25-upgrade](.github/instructions/java-21-to-java-25-upgrade.instructions.md): Java upgrade path guidance
+- [java-17-to-java-21-upgrade](.github/instructions/java-17-to-java-21-upgrade.instructions.md): Java 17 to 21 migration guide
+- [github-actions-ci-cd-best-practices](.github/instructions/github-actions-ci-cd-best-practices.instructions.md): CI/CD workflow best practices
+- [containerization-docker-best-practices](.github/instructions/containerization-docker-best-practices.instructions.md): Docker and container guidance
+- [terraform.instructions](.github/instructions/terraform.instructions.md): Terraform IaC guidance
+- [security-and-owasp](.github/instructions/security-and-owasp.instructions.md): OWASP Top 10 and secure coding practices
+- [performance-optimization](.github/instructions/performance-optimization.instructions.md): Frontend, backend, and database performance best practices
+- [self-explanatory-code-commenting](.github/instructions/self-explanatory-code-commenting.instructions.md): Guidelines for writing self-documenting code
+- [taming-copilot](.github/instructions/taming-copilot.instructions.md): Core directives for controlled, surgical code modifications
+- [update-docs-on-code-change](.github/instructions/update-docs-on-code-change.instructions.md): Keep documentation synchronized with code changes
+- [prompt.instructions](.github/instructions/prompt.instructions.md): Guidelines for authoring Copilot prompt files
+- [instructions.instructions](.github/instructions/instructions.instructions.md): Meta-instructions for managing instruction files
+
+### Prompts
+
+- [update-llms](.github/prompts/update-llms.prompt.md): Update the llms.txt file to reflect repository changes
+- [create-specification](.github/prompts/create-specification.prompt.md): Generate technical specification documents
+- [update-specification](.github/prompts/update-specification.prompt.md): Update existing specification documents
+- [java-docs](.github/prompts/java-docs.prompt.md): Generate Javadoc documentation
+- [java-junit](.github/prompts/java-junit.prompt.md): Generate JUnit test cases
+- [breakdown-test](.github/prompts/breakdown-test.prompt.md): Break down test scenarios
+- [create-agentsmd](.github/prompts/create-agentsmd.prompt.md): Create agent configuration files
+- [update-oo-component-documentation](.github/prompts/update-oo-component-documentation.prompt.md): Update object-oriented component documentation
+
+### Agents
+
+- [api-architect](.github/agents/api-architect.agent.md): API design and architecture agent
+- [debug](.github/agents/debug.agent.md): Debugging and troubleshooting agent
+- [principal-software-engineer](.github/agents/principal-software-engineer.agent.md): Senior engineering guidance agent
+- [se-security-reviewer](.github/agents/se-security-reviewer.agent.md): Security review agent
+- [se-gitops-ci-specialist](.github/agents/se-gitops-ci-specialist.agent.md): GitOps and CI/CD specialist agent
+- [modernization](.github/agents/modernization.agent.md): Code modernization agent
+- [tech-debt-remediation-plan](.github/agents/tech-debt-remediation-plan.agent.md): Technical debt analysis agent
+- [specification](.github/agents/specification.agent.md): Specification authoring agent
+- [terraform](.github/agents/terraform.agent.md): Terraform IaC agent
+- [terraform-iac-reviewer](.github/agents/terraform-iac-reviewer.agent.md): Terraform code review agent
+- [jfrog-sec](.github/agents/jfrog-sec.agent.md): JFrog security scanning agent
+- [gpt-5-beast-mode](.github/agents/gpt-5-beast-mode.agent.md): High-capability general-purpose agent
+
+## Optional
+
+- [dependabot.yml](.github/dependabot.yml): Automated dependency update configuration
+- [context-map skill](.github/skills/context-map/SKILL.md): Bounded context mapping skill
+- [create-architectural-decision-record skill](.github/skills/create-architectural-decision-record/SKILL.md): ADR authoring skill
+- [create-implementation-plan skill](.github/skills/create-implementation-plan/SKILL.md): Implementation planning skill
+- [gh-cli skill](.github/skills/gh-cli/SKILL.md): GitHub CLI usage skill
+- [java-refactoring-remove-parameter skill](.github/skills/java-refactoring-remove-parameter/SKILL.md): Java refactoring skill
+- [java-springboot skill](.github/skills/java-springboot/SKILL.md): Spring Boot development skill
+- [polyglot-test-agent skill](.github/skills/polyglot-test-agent/SKILL.md): Multi-language test generation skill
+- [project-workflow-analysis-blueprint-generator skill](.github/skills/project-workflow-analysis-blueprint-generator/SKILL.md): Workflow analysis skill
+- [refactor skill](.github/skills/refactor/SKILL.md): General code refactoring skill
+- [technology-stack-blueprint-generator skill](.github/skills/technology-stack-blueprint-generator/SKILL.md): Tech stack blueprint skill
+

@@ -14,4 +14,21 @@ class EchoApiApplicationSpec extends Specification {
     expect:
     context
   }
+
+  def "main() starts the application without throwing"() {
+    when:
+    EchoApiApplication.main(new String[0])
+
+    then:
+    noExceptionThrown()
+  }
+
+  def "getMemoryUsage() returns all four memory keys with non-null values"() {
+    when:
+    def usage = EchoApiApplication.MemoryUtil.getMemoryUsage()
+
+    then:
+    usage.keySet() == ["usedMemory", "freeMemory", "totalMemory", "maxMemory"] as Set
+    usage.values().every { it != null && it.endsWith("m") }
+  }
 }

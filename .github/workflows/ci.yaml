@@ -36,10 +36,12 @@ jobs:
 
       - name: jacoco-report
         id: jacoco-report
+        # Only runs on pull_request events — push events have no PR to comment on
+        if: github.event_name == 'pull_request'
         uses: madrapps/jacoco-report@v1.6.1
         with:
           paths: |
-            ${{ github.workspace }}/**/jacoco/*.xml
+            ${{ github.workspace }}/target/site/jacoco/*.xml
           token: ${{ secrets.GITHUB_TOKEN }}
           title: '# :lobster: Coverage Report'
           update-comment: true
