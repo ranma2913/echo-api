@@ -10,15 +10,11 @@ updates:
     schedule:
       interval: "weekly"
     groups:
-      all-dependencies:
-        patterns:
-          - "*"
+      group-by: dependency-name
 
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
     groups:
-      all-dependencies:
-        patterns:
-          - "*"
+      group-by: dependency-name
